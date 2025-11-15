@@ -35,7 +35,7 @@ public class StatementPrinter {
         for (Performance performance : invoice.getPerformances()) {
 
             // add volume credits
-            volumeCredits += Math.max(performance.audience - Constants.BASE_VOLUME_CREDIT_THRESHOLD, 0);
+            volumeCredits = getVolumeCredits(performance, volumeCredits);
             // add extra credit for every five comedy attendees
             if ("comedy".equals(getPlay(performance).type)) volumeCredits += performance.audience / Constants.COMEDY_EXTRA_VOLUME_FACTOR;
 
@@ -48,10 +48,15 @@ public class StatementPrinter {
         return result.toString();
     }
 
+    @SuppressWarnings("checkstyle:ParameterAssignment")
+    private static int getVolumeCredits(Performance performance, int result) {
+        result += Math.max(performance.audience - Constants.BASE_VOLUME_CREDIT_THRESHOLD, 0);
+        return result;
+    }
+
     @SuppressWarnings({"checkstyle:FinalLocalVariable", "checkstyle:SuppressWarnings"})
     private Play getPlay(Performance performance) {
-        Play play = plays.get(performance.playID);
-        return play;
+        return plays.get(performance.playID);
     }
 
     @SuppressWarnings({"checkstyle:MagicNumber", "checkstyle:SuppressWarnings", "checkstyle:ParameterName", "checkstyle:FinalLocalVariable"})
