@@ -24,26 +24,36 @@ public class StatementPrinter {
      * @return the formatted statement
      * @throws RuntimeException if one of the play types is not known
      */
-    @SuppressWarnings({"checkstyle:FinalLocalVariable", "checkstyle:SuppressWarnings", "checkstyle:MagicNumber", "checkstyle:NeedBraces", "checkstyle:LineLength", "checkstyle:Indentation"})
+    @SuppressWarnings({"checkstyle:FinalLocalVariable", "checkstyle:SuppressWarnings", "checkstyle:MagicNumber", "checkstyle:NeedBraces", "checkstyle:LineLength", "checkstyle:Indentation", "checkstyle:MultipleStringLiterals"})
     public String statement() {
-        int totalAmount = 0;
-        int volumeCredits = 0;
+
         StringBuilder result = new StringBuilder("Statement for " + invoice.getCustomer() + System.lineSeparator());
-
         for (Performance performance : invoice.getPerformances()) {
-
-            // add volume credits
-            volumeCredits = getVolumeCredits(performance, volumeCredits);
-            // add extra credit for every five comedy attendees
-            if ("comedy".equals(getPlay(performance).type)) volumeCredits += performance.audience / Constants.COMEDY_EXTRA_VOLUME_FACTOR;
-
-            // print line for this order
             result.append(String.format("  %s: %s (%s seats)%n", getPlay(performance).name, usd(getAmount(performance)), performance.audience));
-            totalAmount += getAmount(performance);
         }
-        result.append(String.format("Amount owed is %s%n", usd(totalAmount)));
-        result.append(String.format("You earned %s credits%n", volumeCredits));
+
+        result.append(String.format("Amount owed is %s%n", usd(getTotalAmount())));
+        result.append(String.format("You earned %s credits%n", getTotalVolumeCredits()));
         return result.toString();
+    }
+
+    private int getTotalAmount() {
+        int totalAmount = 0;
+        for (Performance p : invoice.getPerformances()) {
+            totalAmount += getAmount(p);
+        }
+        return totalAmount;
+    }
+
+    private int getTotalVolumeCredits() {
+        int result = 0;
+        for (Performance p : invoice.getPerformances()) {
+            result += Math.max(p.audience - Constants.BASE_VOLUME_CREDIT_THRESHOLD, 0);
+            if ("comedy".equals(getPlay(p).type)) {
+                result += p.audience / Constants.COMEDY_EXTRA_VOLUME_FACTOR;
+            }
+        }
+        return result;
     }
 
     @SuppressWarnings("checkstyle:MagicNumber")
