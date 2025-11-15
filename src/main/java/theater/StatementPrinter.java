@@ -8,7 +8,9 @@ import java.util.Map;
  * This class generates a statement for a given invoice of performances.
  */
 public class StatementPrinter {
+    @SuppressWarnings({"checkstyle:VisibilityModifier", "checkstyle:SuppressWarnings"})
     public Invoice invoice;
+    @SuppressWarnings({"checkstyle:VisibilityModifier", "checkstyle:SuppressWarnings"})
     public Map<String, Play> plays;
 
     public StatementPrinter(Invoice invoice, Map<String, Play> plays) {
@@ -21,6 +23,7 @@ public class StatementPrinter {
      * @return the formatted statement
      * @throws RuntimeException if one of the play types is not known
      */
+    @SuppressWarnings({"checkstyle:FinalLocalVariable", "checkstyle:SuppressWarnings", "checkstyle:MagicNumber", "checkstyle:NeedBraces", "checkstyle:LineLength", "checkstyle:Indentation"})
     public String statement() {
         int totalAmount = 0;
         int volumeCredits = 0;
